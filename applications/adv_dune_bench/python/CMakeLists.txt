@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 2022-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,8 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(holohub_configure_deb)
+# target does nothing but be created if this folder is reached
+# to set dependencies on adequate operators
+# add_custom_target(advanced_networking_bench_python ALL
+#   DEPENDS advanced_network_python
+# )
 
-add_holohub_package(holoscan-networking
-                    APPLICATIONS adv_networking_bench basic_networking_ping adv_dune_bench
-                    OPERATORS advanced_network basic_network)
+install(
+  FILES main.py
+  DESTINATION examples/adv_dune_bench/
+  RENAME adv_dune_bench.py
+  COMPONENT adv_dune_bench-py
+)

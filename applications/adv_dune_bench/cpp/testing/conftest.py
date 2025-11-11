@@ -1,4 +1,5 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+#!/usr/bin/env python3
+# SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,8 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(holohub_configure_deb)
+import os
 
-add_holohub_package(holoscan-networking
-                    APPLICATIONS adv_networking_bench basic_networking_ping adv_dune_bench
-                    OPERATORS advanced_network basic_network)
+import pytest
+
+
+def pytest_addoption(parser):
+    """Add command line options to pytest."""
+    parser.addoption(
+        "--workdir",
+        action="store",
+        default=os.getcwd(),
+        help="Working directory for tests (where executables and config files are located)",
+    )
+
+
+@pytest.fixture(scope="module")
+def work_dir(request):
+    """Return the working directory."""
+    return request.config.getoption("--workdir")
