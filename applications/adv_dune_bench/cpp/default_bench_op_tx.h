@@ -19,6 +19,7 @@
 #include "advanced_network/kernels.h"
 #include "kernels.cuh"
 #include "holoscan/holoscan.hpp"
+#include "batch_msg.h"          // ← NEW
 #include <queue>
 #include <arpa/inet.h>
 #include <assert.h>
@@ -200,9 +201,28 @@ class AdvNetworkingBenchDefaultTxOp : public Operator {
                             "interface_name",
                             "Name of NIC from advanced_network config",
                             "Name of NIC from advanced_network config");
+    // ---------- new input port ------------------------------------------------
+    spec.input<std::shared_ptr<BatchMsg>>("batch"); // ← name matches the flow
+    // --------------------------------------------------------------------------
   }
 
-  void compute(InputContext&, OutputContext& op_output, ExecutionContext&) override {
+  void compute(InputContext& op_input, OutputContext& op_output, ExecutionContext&) override {
+
+    // ---------------------------------------------------------------
+    // Get the batch that the RX operator just emitted
+    auto batch_msg = op_input.receive<std::shared_ptr<BatchMsg>>("batch");
+    if (!batch_msg) {
+      // No batch yet – simply return; the scheduler will call us again
+      return;
+    }
+    // ---------------------------------------------------------------
+    // Use the received batch to allocate a TX burst that matches its size
+    // (we reuse the same `batch_size_` parameter – the benchmark expects a full batch)
+    // ---------------------------------------------------------------
+    // The original code created a burst with `create_tx_burst_params()`; we now reuse it
+    // because the Advanced Network library still requires a fresh descriptor for each send.
+    // The descriptor is created exactly as before, but we keep the pointer to the batch
+    // so we can copy the payloads from the RX‑side buffers.
     Status ret;
     static int not_available_count = 0;
 

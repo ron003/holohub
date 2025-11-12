@@ -17,6 +17,7 @@
 #if ANO_MGR_DPDK || ANO_MGR_RIVERMAX
 #include "default_bench_op_rx.h"
 #include "default_bench_op_tx.h"
+#include "batch_msg.h"
 #endif
 #if ANO_MGR_GPUNETIO
 #include "doca_bench_op_rx.h"
@@ -48,20 +49,27 @@ class App : public holoscan::Application {
     // DPDK is the default manager backend
     if (mgr_type == advanced_network::ManagerType::DPDK) {
 #if ANO_MGR_DPDK
+      std::shared_ptr<ops::AdvNetworkingBenchDefaultRxOp> bench_rx;
+      std::shared_ptr<ops::AdvNetworkingBenchDefaultTxOp> bench_tx;
       if (rx_en) {
-        auto bench_rx = make_operator<ops::AdvNetworkingBenchDefaultRxOp>(
+        bench_rx = make_operator<ops::AdvNetworkingBenchDefaultRxOp>(
             "bench_rx",
             from_config("bench_rx"),
             make_condition<BooleanCondition>("is_alive", true));
         add_operator(bench_rx);
       }
       if (tx_en) {
-        auto bench_tx = make_operator<ops::AdvNetworkingBenchDefaultTxOp>(
+        bench_tx = make_operator<ops::AdvNetworkingBenchDefaultTxOp>(
             "bench_tx",
             from_config("bench_tx"),
             make_condition<BooleanCondition>("is_alive", true));
         add_operator(bench_tx);
       }
+      //--- connect RX → TX ----------------------------------------------------------
+      if (rx_en && tx_en) {
+        add_flow(bench_rx, bench_tx, {{"batch", "batch"}}); // ← data‑driven pipeline
+      }
+      //----------------------------------------------------------------------------
 #else
       HOLOSCAN_LOG_ERROR("DPDK manager/backend is disabled");
       exit(1);

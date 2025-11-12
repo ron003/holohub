@@ -3,7 +3,6 @@
         "myIncludePath": [
             "/workspace/holoscan-sdk/include",
             "${workspaceFolder}/operators",
-            "${fileWorkspaceFolder}",
             "${workspaceFolder}"
         ],
         "myDefines": [
@@ -15,7 +14,13 @@
         {
             "name": "Linux",
             "includePath": [
-                "${myIncludePath}"
+                "${myIncludePath}",
+                "${workspaceFolder}/operators/advanced_network",
+                "/opt/nvidia/holoscan/include/3rdparty",
+                "/opt/nvidia/holoscan/include",
+                "/opt/nvidia/holoscan/include/gxf",
+                "/opt/nvidia/holoscan/include/3rdparty/ucx",
+                "/usr/local/cuda-12.8/targets/sbsa-linux/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

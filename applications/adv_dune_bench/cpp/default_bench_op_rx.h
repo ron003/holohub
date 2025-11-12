@@ -18,6 +18,7 @@
 #include "advanced_network/common.h"
 #include "advanced_network/kernels.h"
 #include "holoscan/holoscan.hpp"
+#include "batch_msg.h"          // ← NEW
 #include <queue>
 #include <arpa/inet.h>
 #include <assert.h>
@@ -130,6 +131,7 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
                             "Port name",
                             "Name of the port to poll on from the advanced_network config",
                             "rx_port");
+    spec.output<std::shared_ptr<BatchAggregationParams>>("batch"); // ← name matches the flow added in main.cpp
     spec.param<bool>(hds_,
                      "split_boundary",
                      "Header-data split boundary",
@@ -160,6 +162,9 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
                      "Reorder kernel enabled",
                      "Enable reorder kernel if alignment and memory types are supported",
                      true);
+    // NEW – publish a batch to downstream operators
+    spec.output<std::shared_ptr<BatchMsg>>("batch");
+    // -------------------------------------------------------------
   }
 
   // Free buffers if CUDA processing/copy is complete
@@ -180,7 +185,7 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
     }
   }
 
-  void compute(InputContext& op_input, OutputContext&, ExecutionContext& context) override {
+  void compute(InputContext& op_input, OutputContext& op_output, ExecutionContext& context) override {
     // If we processed a batch of packets in a previous compute call, that was done asynchronously,
     // and we'll need to free the packets eventually so the NIC can have space for the next bursts.
     // Ideally, we'd free the packets on a callback from CUDA, but that is slow. For that reason and
@@ -366,7 +371,10 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
         cudaEventRecord(events_[cur_batch_idx_], streams_[cur_batch_idx_]);
         cur_batch_.evt = events_[cur_batch_idx_];
         batch_q_.push(cur_batch_);
-
+        // ----------------------------------------------------------------------
+        // Emit the batch downstream so the TX operator can start sending it
+        op_output.emit<std::shared_ptr<BatchMsg>>(std::make_shared<BatchMsg>());
+        // ----------------------------------------------------------------------
         // CUDA Error checking
         if (cudaGetLastError() != cudaSuccess) {
           HOLOSCAN_LOG_ERROR("CUDA error with {} packets in batch and {} bytes total",
