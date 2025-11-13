@@ -131,7 +131,6 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
                             "Port name",
                             "Name of the port to poll on from the advanced_network config",
                             "rx_port");
-    spec.output<std::shared_ptr<BatchAggregationParams>>("batch"); // ← name matches the flow added in main.cpp
     spec.param<bool>(hds_,
                      "split_boundary",
                      "Header-data split boundary",

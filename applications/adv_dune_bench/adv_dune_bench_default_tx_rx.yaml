@@ -72,8 +72,8 @@ advanced_network:
             type: queue
             id: 0
           match:
-            udp_src: 4096
-            udp_dst: 4096
+            udp_src: 0       #4096
+            udp_dst: 17476   #4096
             # ipv4_len: 1050
 
 bench_rx:
@@ -94,5 +94,5 @@ bench_tx:
   eth_dst_addr: 48:b0:2d:f4:09:0a # Destination MAC address - required when Rx flow_isolation=true
   ip_src_addr: 192.168.3.4    # Source IP address - required on layer 3 network
   ip_dst_addr: 192.168.3.5    # Destination IP address - required on layer 3 network
-  udp_src_port: 4096        # UDP source port
-  udp_dst_port: 4096        # UDP destination port
+  udp_src_port: 0           #4096        # UDP source port
+  udp_dst_port: 17476       #4096        # UDP destination port
