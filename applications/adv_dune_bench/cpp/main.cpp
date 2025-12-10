@@ -14,14 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#define ANO_MGR_DPDK 1
+#define ANO_MGR_GPUNETIO 1
 #if ANO_MGR_DPDK || ANO_MGR_RIVERMAX
-#include "default_bench_op_rx.h"
-#include "default_bench_op_tx.h"
-#include "batch_msg.h"
+//# pragma message("ANO_MGR_DPDK is true")
+# include "default_bench_op_rx.h"
+# include "default_bench_op_tx.h"
+# include "batch_msg.h"
 #endif
 #if ANO_MGR_GPUNETIO
-#include "doca_bench_op_rx.h"
-#include "doca_bench_op_tx.h"
+//# pragma message("ANO_MGR_GPUNETIO is true")
+# include "doca_bench_op_rx.h"
+# include "doca_bench_op_tx.h"
 #endif
 #include "advanced_network/kernels.h"
 #include "holoscan/holoscan.hpp"
