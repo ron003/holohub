@@ -20,7 +20,7 @@
                 "/opt/nvidia/holoscan/include",
                 "/opt/nvidia/holoscan/include/gxf",
                 "/opt/nvidia/holoscan/include/3rdparty/ucx",
-                "/usr/local/cuda-12.8/targets/sbsa-linux/include"
+                "/usr/local/cuda/targets/sbsa-linux/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

@@ -139,4 +139,5 @@
         "/workspace/holoscan-sdk/python/",
         "/workspace/holohub/operators",
     ],
+    "terminal.integrated.defaultProfile.linux": "bash"
 }
