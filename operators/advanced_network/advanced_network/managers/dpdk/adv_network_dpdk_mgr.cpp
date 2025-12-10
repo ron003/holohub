@@ -210,6 +210,7 @@ Status DpdkMgr::map_mrs() {
       return Status::NULL_PTR;
     }
 
+    HOLOSCAN_LOG_INFO("ext_pktmbufs_.count()={}",ext_pktmbufs_.size());
     for (const auto& ext_mem_el : ext_pktmbufs_) {
       const auto& ext_mem = ext_mem_el.second;
 
@@ -220,7 +221,9 @@ Status DpdkMgr::map_mrs() {
 
       if (ret) {
         HOLOSCAN_LOG_CRITICAL(
-            "Could not DMA map EXT memory: {} err={}", ret, rte_strerror(rte_errno));
+            "Could not DMA map EXT memory: {} err={} device={} ptr={} iova={} buf_len={}",
+	    ret, rte_strerror(rte_errno),
+	    (void*)dev_info.device, ext_mem->buf_ptr, ext_mem->buf_iova, ext_mem->buf_len );
         return Status::NULL_PTR;
       }
 

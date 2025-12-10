@@ -34,12 +34,12 @@ advanced_network:
       kind: "device"
       affinity: 0
       num_bufs: 20000
-      buf_size: 8000
+      buf_size: 8192
     - name: "Data_RX_GPU"
       kind: "device"
       affinity: 0
       num_bufs: 20000
-      buf_size: 8000
+      buf_size: 8192
 
     interfaces:
     - name: "tx_port"
