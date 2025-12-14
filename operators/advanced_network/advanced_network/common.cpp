@@ -279,6 +279,7 @@ Status send_tx_burst(BurstParams* burst) {
 
 Status get_rx_burst(BurstParams** burst, int port, int q) {
   ASSERT_ANO_MGR_INITIALIZED();
+  //HOLOSCAN_LOG_INFO("common.cpp:get_rx_burst(1,2,3) called");
   return g_ano_mgr->get_rx_burst(burst, port, q);
 }
 

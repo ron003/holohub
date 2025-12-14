@@ -170,6 +170,7 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
   void free_processed_packets() {
     // Iterate through the batches tracked for processing
     while (batch_q_.size() > 0) {
+      HOLOSCAN_LOG_INFO("free_processed_packets() batch_q_.size()={}",batch_q_.size());
       const auto batch = batch_q_.front();
       // If CUDA processing/copy is complete, free the packets for all bursts in this batch
       if (cudaEventQuery(batch.evt) == cudaSuccess) {
@@ -189,6 +190,7 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
     // and we'll need to free the packets eventually so the NIC can have space for the next bursts.
     // Ideally, we'd free the packets on a callback from CUDA, but that is slow. For that reason and
     // to keep it simple, we do that check right here on the next epoch of the operator.
+    //HOLOSCAN_LOG_INFO("compute(...) begin.");
     free_processed_packets();
 
     BurstParams *burst;
@@ -196,14 +198,17 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
     // In this example, we'll loop through all the rx queues of the interface
     // assuming we want to process the packets the same way for all queues
     const auto num_rx_queues = get_num_rx_queues(port_id_);
+    //HOLOSCAN_LOG_INFO("compute(...): num_rx_queues={}",num_rx_queues);
     for (int q = 0; q < num_rx_queues; q++) {
       auto status = get_rx_burst(&burst, port_id_, q);
       if (status != Status::SUCCESS) {
         HOLOSCAN_LOG_DEBUG("No RX burst available");
+        //HOLOSCAN_LOG_INFO("No RX burst available");
         continue;
       }
 
       auto burst_size = get_num_packets(burst);
+      HOLOSCAN_LOG_INFO("compute(...): burst_size={}",burst_size);
 
       // Count packets received
       ttl_pkts_recv_ += burst_size;

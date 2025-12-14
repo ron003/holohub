@@ -265,6 +265,7 @@ uint16_t Manager::get_num_rx_queues(int port_id) const {
 
 Status Manager::get_rx_burst(BurstParams** burst, int port_id) {
   // Check if the port_id is valid
+  HOLOSCAN_LOG_INFO("get_rx_burst(burst,port_id) called");
   if (port_id < 0 || port_id >= static_cast<int>(cfg_.ifs_.size())) {
     HOLOSCAN_LOG_ERROR("Invalid port_id {} provided to get_rx_burst", port_id);
     return Status::INVALID_PARAMETER;

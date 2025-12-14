@@ -1914,6 +1914,7 @@ void DpdkMgr::free_tx_burst(BurstParams* burst) {
 Status DpdkMgr::get_rx_burst(BurstParams** burst, int port, int q) {
   uint32_t key = generate_queue_key(port, q);
   const auto ring_it = rx_rings.find(key);
+  //HOLOSCAN_LOG_INFO("DpdkMgr::get_rx_burst(1,2,3) called");
 
   if (ring_it == rx_rings.end()) {
     HOLOSCAN_LOG_ERROR("Invalid port/queue combination in get_rx_burst: {}/{}", port, q);
@@ -1921,9 +1922,11 @@ Status DpdkMgr::get_rx_burst(BurstParams** burst, int port, int q) {
   }
 
   if (rte_ring_dequeue(ring_it->second, reinterpret_cast<void**>(burst)) < 0) {
+    //HOLOSCAN_LOG_INFO("DpdkMgr::get_rx_burst(1,2,3) returning NOT_READY");
     return Status::NOT_READY;
   }
 
+  HOLOSCAN_LOG_INFO("DpdkMgr::get_rx_burst(1,2,3) returning SUCCESS");
   return Status::SUCCESS;
 }
 

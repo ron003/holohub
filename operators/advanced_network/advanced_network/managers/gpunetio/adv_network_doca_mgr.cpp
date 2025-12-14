@@ -1795,6 +1795,7 @@ void DocaMgr::free_tx_burst(BurstParams* burst) {
 Status DocaMgr::get_rx_burst(BurstParams** burst, int port, int q) {
   uint32_t key = generate_queue_key(port, q);
   auto ring_it = rx_rings.find(key);
+  HOLOSCAN_LOG_INFO("DocaMgr::get_rx_burst(1,2,3) called");
 
   if (ring_it == rx_rings.end()) {
     HOLOSCAN_LOG_ERROR("get_rx_burst: Could not find ring for port {}, queue {}. Check config.",
