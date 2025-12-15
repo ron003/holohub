@@ -16,10 +16,11 @@
             "includePath": [
                 "${myIncludePath}",
                 "${workspaceFolder}/operators/advanced_network",
-                "/opt/nvidia/holoscan/include/3rdparty",
                 "/opt/nvidia/holoscan/include",
                 "/opt/nvidia/holoscan/include/gxf",
+                "/opt/nvidia/holoscan/include/3rdparty",
                 "/opt/nvidia/holoscan/include/3rdparty/ucx",
+                "/opt/nvidia/holoscan/include/3rdparty/matx",
                 "/usr/local/cuda/targets/sbsa-linux/include"
             ],
             "defines": [],
