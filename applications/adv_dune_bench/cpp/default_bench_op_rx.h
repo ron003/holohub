@@ -162,7 +162,7 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
                      "Enable reorder kernel if alignment and memory types are supported",
                      true);
     // NEW – publish a batch to downstream operators
-    spec.output<std::shared_ptr<BatchMsg>>("batch");
+    //spec.output<std::shared_ptr<BatchMsg>>("batch");
     // -------------------------------------------------------------
   }
 
@@ -209,6 +209,8 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
 
       auto burst_size = get_num_packets(burst);
       HOLOSCAN_LOG_INFO("compute(...): burst_size={}",burst_size);
+      free_all_packets_and_burst_rx(burst);
+      continue;
 
       // Count packets received
       ttl_pkts_recv_ += burst_size;
@@ -377,7 +379,7 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
         batch_q_.push(cur_batch_);
         // ----------------------------------------------------------------------
         // Emit the batch downstream so the TX operator can start sending it
-        op_output.emit<std::shared_ptr<BatchMsg>>(std::make_shared<BatchMsg>());
+        //op_output.emit<std::shared_ptr<BatchMsg>>(std::make_shared<BatchMsg>());
         // ----------------------------------------------------------------------
         // CUDA Error checking
         if (cudaGetLastError() != cudaSuccess) {
