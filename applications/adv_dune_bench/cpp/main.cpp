@@ -45,6 +45,7 @@ class App : public holoscan::Application {
     HOLOSCAN_LOG_INFO("Configured the Advanced Network manager");
 
     const auto [rx_en, tx_en] = advanced_network::get_rx_tx_configs_enabled(config());
+    HOLOSCAN_LOG_INFO("XXXX rx_en={} tx_en={}",rx_en, tx_en);
     const auto mgr_type = advanced_network::get_manager_type(config());
 
     HOLOSCAN_LOG_INFO("Using Advanced Network manager {}",
@@ -132,6 +133,7 @@ int main(int argc, char** argv) {
     return -1;
   }
 
+  HOLOSCAN_LOG_INFO("AAAA Hello from main()");
   std::filesystem::path config_path(argv[1]);
   if (!config_path.is_absolute()) {
     config_path = std::filesystem::canonical(argv[0]).parent_path() / config_path;
