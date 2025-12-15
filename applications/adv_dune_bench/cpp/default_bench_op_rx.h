@@ -162,7 +162,7 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
                      "Enable reorder kernel if alignment and memory types are supported",
                      true);
     // NEW – publish a batch to downstream operators
-    //spec.output<std::shared_ptr<BatchMsg>>("batch");
+    spec.output<std::shared_ptr<BatchMsg>>("batch");
     // -------------------------------------------------------------
   }
 
@@ -209,8 +209,8 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
 
       auto burst_size = get_num_packets(burst);
       HOLOSCAN_LOG_INFO("compute(...): burst_size={}",burst_size);
-      free_all_packets_and_burst_rx(burst);
-      continue;
+      //free_all_packets_and_burst_rx(burst);  // REMOVE WHEN NOT DEBUGGING
+      //continue;                              // COMMENT OUT WHEN NOT DEBUGGING
 
       // Count packets received
       ttl_pkts_recv_ += burst_size;
@@ -223,6 +223,7 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
         /* GPUDirect mode (needs to match if the advanced_network queue uses 1 or more memory regions)
         * Save off the GPU pointers into a host-pinned buffer (h_dev_ptrs_) to reassemble later.
         */
+        HOLOSCAN_LOG_INFO("compute(...): gpu_direct.get true",burst_size);
         if (hds_.get()) {
           // Header-Data-Split: header to CPU, payload to GPU
           // NOTE: current App assumes only two memory region segments, one for header (CPU),
@@ -258,6 +259,7 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
           }
         }
       } else {
+        HOLOSCAN_LOG_INFO("compute(...): gpu_direct.get false - CPU mode",burst_size);
         /* CPU Mode (needs to match if the advanced_network queue uses no GPU memory regions)
         * Copy each packet payload in a continuous host-pinned buffer, copy of that larger buffer to
         * the GPU will occur later (copying each packet to GPU directly would be too expensive).
@@ -314,6 +316,7 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
       * the next burst before processing them in a batch.
       */
       aggr_pkts_recv_ += burst_size;
+      HOLOSCAN_LOG_INFO("compute(...): aggr_pkts_recv_={}",aggr_pkts_recv_);
       if (aggr_pkts_recv_ >= batch_size_.get()) {
         // Reset counter for the next app batch
         aggr_pkts_recv_ = 0;
@@ -379,7 +382,7 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
         batch_q_.push(cur_batch_);
         // ----------------------------------------------------------------------
         // Emit the batch downstream so the TX operator can start sending it
-        //op_output.emit<std::shared_ptr<BatchMsg>>(std::make_shared<BatchMsg>());
+        op_output.emit<std::shared_ptr<BatchMsg>>(std::make_shared<BatchMsg>());
         // ----------------------------------------------------------------------
         // CUDA Error checking
         if (cudaGetLastError() != cudaSuccess) {

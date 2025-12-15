@@ -66,8 +66,9 @@ class App : public holoscan::Application {
       if (tx_en) {
         bench_tx = make_operator<ops::AdvNetworkingBenchDefaultTxOp>(
             "bench_tx",
-            from_config("bench_tx"),
-            make_condition<BooleanCondition>("is_alive", true));
+            from_config("bench_tx")
+            //make_condition<BooleanCondition>("is_alive", true
+            );
         add_operator(bench_tx);
       }
       //--- connect RX → TX ----------------------------------------------------------

@@ -211,6 +211,7 @@ class AdvNetworkingBenchDefaultTxOp : public Operator {
     // ---------------------------------------------------------------
     // Get the batch that the RX operator just emitted
     auto batch_msg = op_input.receive<std::shared_ptr<BatchMsg>>("batch");
+    HOLOSCAN_LOG_INFO("Hello form tx compute");
     if (!batch_msg) {
       // No batch yet – simply return; the scheduler will call us again
       return;
