@@ -73,7 +73,7 @@ advanced_network:
             type: queue
             id: 0
           match:
-            udp_src: 38317   #4096
+            udp_src: 0   #4096   Use 0 if src_port changes
             udp_dst: 17476   #4096
             # ipv4_len: 1050
 
@@ -89,7 +89,7 @@ bench_tx:
   interface_name: "tx_port" # Name of the TX port from the advanced_network config
   gpu_direct: true          # Set to true if using a GPU region for the Tx queues.
   split_boundary: 0         # Byte boundary where header and data is split, 0 if no split
-  batch_size: 1024
+  batch_size: 256
   payload_size: 7200
   header_size: 64
   eth_dst_addr: 48:b0:2d:f4:09:0a # Destination MAC address - required when Rx flow_isolation=true

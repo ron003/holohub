@@ -211,7 +211,7 @@ class AdvNetworkingBenchDefaultTxOp : public Operator {
     // ---------------------------------------------------------------
     // Get the batch that the RX operator just emitted
     auto batch_msg = op_input.receive<std::shared_ptr<BatchMsg>>("batch");
-    HOLOSCAN_LOG_INFO("Hello form tx compute");
+    HOLOSCAN_LOG_INFO("Hello from tx compute. batch_size_={}",batch_size_.get());
     if (!batch_msg) {
       // No batch yet – simply return; the scheduler will call us again
       return;
@@ -343,28 +343,33 @@ class AdvNetworkingBenchDefaultTxOp : public Operator {
     }
 
     // Populate packets with 16-bit numbers of {0,0}, {1,1}, ...
-    if (gpu_direct_.get()) {
-      const auto offset = (hds_.get() > 0) ? 0 : header_size_.get();
-      populate_packets(gpu_bufs[cur_idx],
-                       payload_size_.get(),
-                       get_num_packets(msg),
-                       offset,
-                       streams_[cur_idx]);
-      cudaEventRecord(events_[cur_idx], streams_[cur_idx]);
-      out_q.push(TxMsg{msg, events_[cur_idx]});
-    }
+    // if (gpu_direct_.get()) {
+    //   HOLOSCAN_LOG_INFO("gpu_direct_.get() == true");
+    //   const auto offset = (hds_.get() > 0) ? 0 : header_size_.get();
+    //   populate_packets(gpu_bufs[cur_idx],
+    //                    payload_size_.get(),
+    //                    get_num_packets(msg),
+    //                    offset,
+    //                    streams_[cur_idx]);
+    //   cudaEventRecord(events_[cur_idx], streams_[cur_idx]);
+    //   out_q.push(TxMsg{msg, events_[cur_idx]});
+    // }
 
     cur_idx = (++cur_idx % num_concurrent);
+    HOLOSCAN_LOG_INFO("cur_idx={} num_concurrent={}",cur_idx,num_concurrent);
 
-    if (gpu_direct_.get()) {
-      const auto first = out_q.front();
-      if (cudaEventQuery(first.evt) == cudaSuccess) {
-        send_tx_burst(first.msg);
-        out_q.pop();
-      }
-    } else {
+    // if (gpu_direct_.get()) {
+    //   const auto first = out_q.front();
+    //   HOLOSCAN_LOG_INFO("gpu_direct_.get() == true -- ");
+    //   if (cudaEventQuery(first.evt) == cudaSuccess) {
+    //     HOLOSCAN_LOG_INFO("cur_idx={} cudaSuccess",cur_idx);
+    //     send_tx_burst(first.msg);
+    //     out_q.pop();
+    //   }
+    // } else {
+      HOLOSCAN_LOG_INFO("!gpu_direct_.get() - send_tx_burst(msg)");
       send_tx_burst(msg);
-    }
+    //}
   };
 
  private:

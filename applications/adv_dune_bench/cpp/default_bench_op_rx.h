@@ -208,7 +208,7 @@ class AdvNetworkingBenchDefaultRxOp : public Operator {
       }
 
       auto burst_size = get_num_packets(burst);
-      HOLOSCAN_LOG_INFO("compute(...): burst_size={}",burst_size);
+      HOLOSCAN_LOG_INFO("compute(...): q={} of {} burst_size={}",q,num_rx_queues,burst_size);
       //free_all_packets_and_burst_rx(burst);  // REMOVE WHEN NOT DEBUGGING
       //continue;                              // COMMENT OUT WHEN NOT DEBUGGING
 
